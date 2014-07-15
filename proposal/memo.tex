@@ -1,0 +1,131 @@
+%-----------------------------------------------------------------------------
+%
+%               Template for sigplanconf LaTeX Class
+%
+% Name:         sigplanconf-template.tex
+%
+% Purpose:      A template for sigplanconf.cls, which is a LaTeX 2e class
+%               file for SIGPLAN conference proceedings.
+%
+% Guide:        Refer to "Author's Guide to the ACM SIGPLAN Class,"
+%               sigplanconf-guide.pdf
+%
+% Author:       Paul C. Anagnostopoulos
+%               Windfall Software
+%               978 371-2316
+%               paul@windfall.com
+%
+% Created:      15 February 2005
+%
+%-----------------------------------------------------------------------------
+
+
+\documentclass[nocopyrightspace]{sigplanconf}
+
+% The following \documentclass options may be useful:
+
+% preprint      Remove this option only once the paper is in final form.
+% 10pt          To set in 10-point type instead of 9-point.
+% 11pt          To set in 11-point type instead of 9-point.
+% authoryear    To obtain author/year citation style instead of numeric.
+
+\usepackage{amsmath}
+
+
+\begin{document}
+
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country} 
+\copyrightyear{20yy} 
+\copyrightdata{978-1-nnnn-nnnn-n/yy/mm} 
+\doi{nnnnnnn.nnnnnnn}
+
+% Uncomment one of the following two, if you are not going for the 
+% traditional copyright transfer agreement.
+
+%\exclusivelicense                % ACM gets exclusive license to publish, 
+                                  % you retain copyright
+
+%\permissiontopublish             % ACM gets nonexclusive license to publish
+                                  % (paid open-access papers, 
+                                  % short abstracts)
+
+\titlebanner{banner above paper title}        % These are ignored unless
+\preprintfooter{short description of paper}   % 'preprint' option specified.
+
+\title{Certified LLVM}
+\subtitle{Proposal for my PhD}
+
+\authorinfo{Jeehoon Kang}
+           {Software Foundations Laboratory}
+           {jhkang@ropas.snu.ac.kr}
+
+\maketitle
+
+\begin{abstract}
+  I aim to \emph{certify} the LLVM compiler framework, a practical
+  foundation for real-world programming language tools such as
+  compilers and static/dynamic analyzers.  TODO: why this work is
+  important?
+
+  More specifically, I would like to \emph{(i)} formalize the LLVM
+  syntax and semantics as is used in the real-world, \emph{(ii)}
+  establish a powerful reasoning principle for LLVM, and \emph{(iii)}
+  prove level 1 optimization (\texttt{-O1}) for the LLVM compiler
+  based on the reasoning principle.
+
+  I expect a lot of theoretical/practical challenges for this project
+  including \emph{(i)} formalizing standards consisting of ambiguous
+  prose, \emph{(ii)} reducing efforts by re-using previous
+  developments, \emph{(iii)} dealing with relaxed behavior of
+  memories, and \emph{(iv)} supporting compositional reasoning
+  principle essential in modular development.
+
+  I would like to lead this project for my PhD degree.  The project
+  will be a monumental work, so I anticipate \emph{your}
+  participation, along with that from all around the world.
+\end{abstract}
+
+\section{Context}
+TODO
+
+\paragraph{Problem}
+TODO(real-world)
+
+\paragraph{Previous Work}
+TODO
+
+\section{Goal}
+TODO
+
+\section{Challenge}
+TODO
+
+\subsection{Formalization of Real-World Languages and Machines}
+\subsection{Re-use of Previous Development}
+\subsection{Relaxed Memory Model}
+\subsection{Compositional Reasoning}
+
+\section{Plan}
+TODO
+
+% We recommend abbrvnat bibliography style.
+
+\bibliographystyle{abbrvnat}
+
+% The bibliography should be embedded for final submission.
+
+\bibliography{references}
+
+\end{document}
+
+%                       Revision History
+%                       -------- -------
+%  Date         Person  Ver.    Change
+%  ----         ------  ----    ------
+
+%  2013.06.29   TU      0.1--4  comments on permission/copyright notices
+
