@@ -1,12 +1,12 @@
 -adce                           aggressive dead code elimination
 -always-inline                  inline function
--barrier                        ?
+-barrier                        A No-Op Barrier Pass
 -basicaa                        basic alias analysis (stateless)
 -basicaa
 -basiccg                        callgraph construction
 -block-freq                     ?(analysis)
 -branch-prob                    ?(analysis)
--correlated-propagation         ?         
+-correlated-propagation         ?(Value Propagation)
 -correlated-propagation
 -deadargelim                    elim dead args
 -domtree                        dom tree construction
@@ -21,7 +21,7 @@
 -functionattrs                  mark readonly/readnone/nocapture
 -globalopt                      global variable optimizer
 -indvars                        canonicalize induction variable
--inline-cost                    ?
+-inline-cost                    ?(Inline Cost Analysis)
 -instcombine                    instruction combining
 -instcombine
 -instcombine
@@ -31,7 +31,7 @@
 -ipsccp                         interprocedural sparse conditional constant propagation
 -jump-threading                 jump basic block for known branching
 -jump-threading
--lazy-value-info                ?(analysis)
+-lazy-value-info                ?(Lazy Value Info Analysis)
 -lazy-value-info
 -lcssa                          loop-closed SSA form (adding a unnecessary phinode)
 -lcssa
@@ -39,8 +39,8 @@
 -lcssa
 -licm                           loop invariant code motion
 -loop-deletion                  delete dead loops
--loop-idiom                     ?
--loop-rotate                    ?
+-loop-idiom                     ?(Recognize Loop Idioms)
+-loop-rotate                    ?(Rotate Loops)
 -loop-simplify                  simplify cfg for loops
 -loop-simplify
 -loop-simplify
@@ -48,16 +48,16 @@
 -loop-unroll
 -loop-unswitch                  for-if => if-for
 -loop-vectorize                 ?(http://llvm.org/docs/Vectorizers.html)
--loops                          ?(analysis)
+-loops                          ?(Natural Loop Information)
 -loops
 -loops
--lower-expect                   ?
+-lower-expect                   ?(Lower 'expect' intrinsics)
 -memcpyopt                      related to memcpy/memset
 -memdep                         mem dependence analysis
 -memdep
 -no-aa                          no alias analysis
 -no-aa
--notti                          ?
+-notti                          ?(No Target Information)
 -notti
 -prune-eh                       remove unused exception handling
 -reassociate                    reassociate commutative expressions
@@ -75,9 +75,9 @@
 -sroa
 -strip-dead-prototypes          remove dead decls
 -tailcallelim                   tail call elimination
--targetlibinfo                  ?
+-targetlibinfo                  ?(Target Library Information)
 -targetlibinfo
--tbaa                           ?
+-tbaa                           ?(Type-Based Alias Analysis)
 -tbaa
 -verify                         well-formedness check
 -verify
