@@ -56,23 +56,24 @@
 \titlebanner{banner above paper title}        % These are ignored unless
 \preprintfooter{short description of paper}   % 'preprint' option specified.
 
-\title{Certified LLVM}
-\subtitle{Proposal for my PhD}
+\title{Proposal: Certified LLVM}
+% \subtitle{Proposal for my PhD}
 
 \authorinfo{Jeehoon Kang}
            {Software Foundations Laboratory}
-           {jhkang@ropas.snu.ac.kr}
+           {}
+           % {jhkang@ropas.snu.ac.kr}
 
 \maketitle
 
 \begin{abstract}
-  I aim to \emph{certify} the LLVM compiler framework, a practical
-  foundation for real-world programming language tools such as
-  compilers and static/dynamic analyzers.  Previous works on compiler
-  verification typically focused on building new compilers.  These new
-  compilers were used for safety-critical systems such as airplanes.
-  On the other hand, I target on LLVM to certify a compiler that is
-  daily used for all softwares.
+  I aim to certify the LLVM compiler framework, a practical foundation
+  for real-world programming language tools such as compilers and
+  static/dynamic analyzers.  Previous works on compiler verification
+  typically focused on building new compilers.  These new compilers
+  were used for safety-critical systems such as airplanes.  On the
+  other hand, I target on LLVM to certify a general-purpose compiler
+  that is daily used for all softwares.
 
   More specifically, I would like to \emph{(i)} formalize the LLVM
   syntax and semantics as is used in the real-world, \emph{(ii)}
@@ -80,12 +81,12 @@
   prove optimization level 1 (\texttt{-O1}) for the LLVM compiler
   based on the reasoning principle.
 
-  I expect a lot of theoretical/practical challenges for this project
-  including \emph{(i)} formalizing standards consisting of ambiguous
-  prose, \emph{(ii)} reducing verification efforts by re-using
-  previous developments, \emph{(iii)} dealing with relaxed behavior of
-  memories, and \emph{(iv)} supporting compositional reasoning
-  principle essential in modular development.
+  I expect lots of theoretical and practical challenges for this
+  project including \emph{(i)} formalizing standards consisting of
+  ambiguous prose, \emph{(ii)} reducing verification efforts by
+  re-using previous developments, \emph{(iii)} dealing with relaxed
+  behavior of memories, and \emph{(iv)} supporting compositional
+  reasoning principle essential in modular development.
 
   I would like to do this project for my PhD.  The project will be a
   monumental work, so I anticipate \emph{your} participation, along
@@ -110,57 +111,98 @@ certified compiler for a significant subset of C.  CompCertTSO
 \emph{relaxed memory model} (\S\ref{sec:relaxed}) of the x86 and Sparc
 architectures.  Vellvm \cite{TODO} is a certified LLVM framework upon
 which \texttt{mem2reg} \cite{TODO} and \texttt{instcombine}
-\cite{TODO} passes are verified.  Vellvm is the first project to
-certify a real-world compiler.  On the other hand, in the theoretical
-side, Hur et al. conducted a line of research of \emph{compositional
-  reasoning} (\S\ref{sec:compose}) for modular proof of compiler
-certification \cite{TODO}.  Chlipala built a certified compiler for a
-ML-like language, focusing on proof automation \cite{TODO}.
+\cite{TODO} passes are verified.  Vellvm is the first project that
+aims to certify a real-world compiler.  On the other hand, in the
+theoretical side, Hur et al. conducted a line of research of
+\emph{compositional reasoning} (\S\ref{sec:compose}) for modular proof
+of compiler certification \cite{TODO}.  Chlipala built a certified
+compiler for a ML-like language, focusing on proof automation
+\cite{TODO}.
 
-\paragraph{Need for Future Works}
-However, I see a need for future works on compiler certification for
-the following reasons:
-\begin{itemize}
-\item Certification of \emph{actually} real-world compiler: to certify
-  a real-world compiler, it is essential to faithfully certify an
-  existing, widespreadly used compiler.  Unfortunately, CompCert and
-  CompCertTSO is built for verification and not widely used.
-  Furthermore, CompCert's and Vellvm's semantics deals with only
-  single-thread programs, entirely ignoring concurrency.  CompCertTSO
-  addresses concurrency and deals with the TSO memory model, but
-  C11/C++11 semantics of concurrency is not entirely captured in the
-  TSO model.  Moreover, even except for concurrency, Vellvm's
-  semantics is not entirely faithful to the official LLVM semantics.
-  For example, Vellvm did not formalize vector types (statically sized
-  arrays), indirect jumps, and exceptions.  
+\subsection{Problem}
+However, I see a need for future works to certify a real-world
+compiler for the following reasons:
 
-  I would like to address above issues and formalize the syntax and
-  semantics of the LLVM IR as faithful as the production-ready level.
+\paragraph{Limited Tool Support} 
+CompCert and CompCertTSO is built for verification and they support
+relatively limited set of tools.  Particularly, CompCert's
+\texttt{ccomp} is not an out-of-box replacement of \texttt{gcc}.  To
+this end, it is needed to verify an existing, widely used compiler
+such as GCC and LLVM.  Vellvm is the only project in this approach.
 
-\item Powerful peasoning principle: TODO
+\paragraph{Unfaithful Semantics}
+existing certified compilers do not faithfully model the semantics of
+programming languages and architectures.  For concurrency, CompCert's
+and Vellvm's semantics deals with only single-thread programs,
+entirely ignoring concurrency.  CompCertTSO addresses concurrency and
+deals with the TSO memory model, but C11/C++11 semantics of
+concurrency is not entirely captured in the TSO model.  Moreover, even
+except for concurrency, Vellvm's semantics is not entirely faithful to
+the official LLVM semantics.  For example, Vellvm did not formalize
+vector types (statically sized arrays), indirect jumps, and
+exceptions.
 
-\item Low verification cost: TODO
+\paragraph{High Verification Cost}
+Certified compiler projects took several person-years to develop.  A
+real-world compiler will be a bigger software than previously
+certified ones.  Thus its certification will take more efforts, if
+verification cost is not properly managed.
 
-\end{itemize}
+\paragraph{Low Performance of Compilation Result}
+In a benchmark I performed, CompCert's \texttt{ccomp} is 20\% slower
+than LLVM's \texttt{clang -O1} (geometric mean).  CompCert's
+performance may be acceptable for some use cases, but is
+unsatisfactory for a general-purpose compiler.  To certify a
+real-world compiler, the performance issue should be addressed.
 
 \section{Goal}
-TODO
 
-\paragraph{Formalization of LLVM}
-TODO
+In my PhD, I would like to address the above-mentioned problems in
+certification of a real-world compiler.  As an demonstration, I will
+certify the LLVM compiler framework.  Specifically, I would like to do
+the followings:
 
-\paragraph{Powerful Reasoning Principle}
-TODO
+\paragraph{Faithfully Formalizing of LLVM}
+I would like to formalize the syntax and semantics of the LLVM IR as
+faithful as the production-ready level.  I would like to formalize
+program constructs missing in Vellvm, such as vector types, and
+formalize LLVM's concurrency and relaxed memory model.
 
-\paragraph{Certification of Optimization Level 1}
-TODO
+\paragraph{Designing Powerful Reasoning Principle}
+To reduce verification cost, it is essential to design a powerful
+reasoning principle for compiler correctness.  By powerful we expect
+two aspects:
+\begin{itemize}
+\item Applicable to many situations (optimization cases).  It would be
+  too costly to design a proof method for each optimization case.
+  Thus reasoning principle should be as general as possible.
+\item Easy to separate out irrelevant (``framing'') details and focus
+  on real tasks.  For example, if only two variables \texttt{x} and
+  \texttt{y} is relevant to an optimization, we would like to separate
+  out other variables from our concern and focus on the two variables
+  in reasoning.
+\end{itemize}
+These aspects will enable a modular development of verification, thus
+significantly decreasing cost.
+
+\paragraph{Certifying Optimization Level 1}
+On the formalized LLVM IR, we would like to verify optimization level
+1 (\texttt{-O1}) with the designed reasoning principle.  Optimization
+level 1 will ensure high performance of compilation result.  For
+verification cost, fortunately, out of 43 optimization passes in
+\texttt{-O1}, 27 seems to be possible to prove with Hoare-style
+reasoning (relatively basic reasoning principle used in our recently
+submitted paper).  Thus I expect it would take person-years of efforts
+to verify \texttt{-O1}, relatively cheap compared to the size of the
+software.
 
 \section{Challenge}
-TODO
+Towards the goal, I expect lots of theoretical and practical
+interesting challenges.  I am eager to solve the following challenges:
 
-\subsection{Formalization of Real-World Languages and Machines}
+\paragraph{Formalization of Real-World Languages and Machines}
 
-\subsection{Re-use of Previous Development}
+\paragraph{Re-use of Previous Development}
 Compiler certification is not a fresh problem, and lots of certified
 compilers are developed, including CompCert \cite{TODO}, CompCertTSO
 \cite{TODO}, and Vellvm \cite{TODO}.  Each project took person-years
@@ -175,9 +217,7 @@ memory model of x86 and Sparc architectures.  We may restrict our
 concern to the TSO model, instead of more relaxed models such as
 C11/C++11 and ARM models, to re-use CompCertTSO's memory model as-is.
 
-\paragraph{Semantics}
-
-\subsection{Relaxed Memory Model}\label{sec:relaxed}
+\paragraph{Relaxed Memory Model}\label{sec:relaxed}
 In the context of semantics engineering for single-thread programs,
 memory has long been abstracted to map from locations to values.  Many
 works on compiler certification and static analysis relies on this
@@ -216,7 +256,7 @@ seems to be much more complicated than on the simple model
 powerful, easy-to-use reasoning principle on the model would be
 essential in certification of LLVM.
 
-\subsection{Compositional Reasoning}\label{sec:compose}
+\paragraph{Compositional Reasoning}\label{sec:compose}
 
 For modular development and proof of certified software, it is
 essential to prove in part, then \emph{composite} the partial proof to
