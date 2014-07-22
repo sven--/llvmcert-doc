@@ -68,48 +68,142 @@
 \begin{abstract}
   I aim to \emph{certify} the LLVM compiler framework, a practical
   foundation for real-world programming language tools such as
-  compilers and static/dynamic analyzers.  TODO: why this work is
-  important?
+  compilers and static/dynamic analyzers.  Previous works on compiler
+  verification typically focused on building new compilers.  These new
+  compilers were used for safety-critical systems such as airplanes.
+  On the other hand, I target on LLVM to certify a compiler that is
+  daily used for all softwares.
 
   More specifically, I would like to \emph{(i)} formalize the LLVM
   syntax and semantics as is used in the real-world, \emph{(ii)}
   establish a powerful reasoning principle for LLVM, and \emph{(iii)}
-  prove level 1 optimization (\texttt{-O1}) for the LLVM compiler
+  prove optimization level 1 (\texttt{-O1}) for the LLVM compiler
   based on the reasoning principle.
 
   I expect a lot of theoretical/practical challenges for this project
   including \emph{(i)} formalizing standards consisting of ambiguous
-  prose, \emph{(ii)} reducing efforts by re-using previous
-  developments, \emph{(iii)} dealing with relaxed behavior of
+  prose, \emph{(ii)} reducing verification efforts by re-using
+  previous developments, \emph{(iii)} dealing with relaxed behavior of
   memories, and \emph{(iv)} supporting compositional reasoning
   principle essential in modular development.
 
-  I would like to lead this project for my PhD degree.  The project
-  will be a monumental work, so I anticipate \emph{your}
-  participation, along with that from all around the world.
+  I would like to do this project for my PhD.  The project will be a
+  monumental work, so I anticipate \emph{your} participation, along
+  with that from all around the world.
 \end{abstract}
 
 \section{Context}
-TODO
-
-\paragraph{Problem}
-TODO(real-world)
+Certification of real-world compiler is a long-standing goal.
+Compiler is an indispensable component of modern computer systems.
+However, real-world compilers like GCC and LLVM are known to contain
+lots of bugs \cite{TODO}, even in 2010s after 50+ years of compiler
+construction.  Compiler bugs can be detrimental to software
+reliability since the bugs nullify analysis and reasoning on source
+program.  Currently, certification is the only option to ensure the
+absence of compiler bugs \cite{TODO}.
 
 \paragraph{Previous Work}
-TODO
+There are lots of outstanding works on compiler certification.
+TODO(functional programs, compositional reasoning, real-world)
+
+\paragraph{Problem}
+
+\begin{itemize}
+\item Certification of \emph{real-world} compiler:
+\item Compositional reasoning:
+\end{itemize}
+I would like to follow the line of research on compiler certification.
 
 \section{Goal}
+TODO
+
+\paragraph{Formalization of LLVM}
+TODO
+
+\paragraph{Powerful Reasoning Principle}
+TODO
+
+\paragraph{Certification of Optimization Level 1}
 TODO
 
 \section{Challenge}
 TODO
 
 \subsection{Formalization of Real-World Languages and Machines}
+
 \subsection{Re-use of Previous Development}
+
 \subsection{Relaxed Memory Model}
+In the context of semantics engineering for single-thread programs,
+memory has long been abstracted to a map from locations to values.
+Many works on compiler certification and static analysis relies on
+this simple memory abstraction.  This abstraction is useful and
+arguably correct, at least for single-thread programs.  However, the
+abstraction is broken for multi-thread programs.  C11/C++11 standards
+clearly declare that memory is not just a map \cite{TODO}; similarly
+to all modern architectures including x86 \cite{TODO} and ARM
+\cite{TODO}.
+
+Here is an example of the \emph{relaxed} memory behavior, which is not
+explained in the simple model:
+\begin{verbatim}
+int data = 0, flag = 0;
+{{{ data = 1; flag = 1;
+||| while (!flag) {}
+    assert (data==1);
+}}}
+\end{verbatim}
+Here, assume that \texttt{\{\{\{$p_1$|||$p_2$\}\}\}} is a thread-wise
+composition of two programs $p_1$ and $p_2$.  In the simple model, the
+assertion should succeed, since $\texttt{flag}=1$ means
+$\texttt{data}=1$.  However, in ARM processors, the assertion may fail
+due to relaxed memory behavior \cite{TODO}.  I defer the details on
+this example and the relaxed memory model to a tutorial in the ROSAEC
+Workshop.
+
+In the era of multi- and many-core systems, certification of
+real-world compiler should address the relaxed memory behavior.
+However, reasoning on the relaxed memory model seems to be much more
+complicated than on the simple model \cite{TODO}.  Design of a
+powerful, easy-to-use reasoning principle on the relaxed memory model
+would be essential in certification of LLVM.
+
 \subsection{Compositional Reasoning}
 
+For modular development and proof of certified software, it is
+essential to prove in part, then \emph{composite} the partial proof to
+make the whole proof.  In the context of compiler certification, the
+following two are useful compositions:
+\begin{itemize}
+\item Horizontal composition: suppose there is compilation $C_1: p_0
+  \mapsto p_1$ and $C_2: p_1 \mapsto p_2$.  $C_2 \circ C_1: p_0
+  \mapsto p_2$ TODO
+\item Vertical composition: suppose there is compilation $C_p: p_1
+  \mapsto p_2$ and $C_q: q_1 \mapsto q_2$.  $C_p \star C_q: p_1 \star
+  q_1 \mapsto p_2 \star q_2$ TODO
+\end{itemize}
+
+I am lucky in that Prof. Hur is a pioneer in compositional reasoning.
+He has developed a powerful reasoning principle \cite{}, but design of
+a principle for concurrent, relaxed memory model is yet an open
+question.  I would like to solve this problem during the development
+of certified LLVM.
+
 \section{Plan}
+
+\paragraph{Team Building}
+This project will be a monumental work, so I would like to co-work
+with many people.  To this end, Prof. Hur contacted Prof. Vafeiadis in
+MPI-SWS (expert in C/C++, relaxed memory model and compiler
+verification) and Prof. Zdancewic in UPenn (author of Vellvm).  I am
+currently mentoring two interns, hoping that the two join the project
+in the future.  Also, I anticipate \emph{your} participation if you
+are interested in this project.
+
+\paragraph{Verification of Optimization Level 1}
+TODO
+
+\paragraph{Designing Reasoning Principle}
 TODO
 
 % We recommend abbrvnat bibliography style.
