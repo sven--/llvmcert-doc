@@ -103,16 +103,45 @@ program.  Currently, certification is the only option to ensure the
 absence of compiler bugs \cite{TODO}.
 
 \paragraph{Previous Work}
-There are lots of outstanding works on compiler certification.
-TODO(functional programs, compositional reasoning, real-world)
+There are lots of outstanding works on compiler certification.  In the
+practical side, most notably, CompCert \cite{TODO} is the first
+certified compiler for a significant subset of C.  CompCertTSO
+\cite{TODO} is a variant of CompCert to deal with the TSO
+\emph{relaxed memory model} (\S\ref{sec:relaxed}) of the x86 and Sparc
+architectures.  Vellvm \cite{TODO} is a certified LLVM framework upon
+which \texttt{mem2reg} \cite{TODO} and \texttt{instcombine}
+\cite{TODO} passes are verified.  Vellvm is the first project to
+certify a real-world compiler.  On the other hand, in the theoretical
+side, Hur et al. conducted a line of research of \emph{compositional
+  reasoning} (\S\ref{sec:compose}) for modular proof of compiler
+certification \cite{TODO}.  Chlipala built a certified compiler for a
+ML-like language, focusing on proof automation \cite{TODO}.
 
-\paragraph{Problem}
-
+\paragraph{Need for Future Works}
+However, I see a need for future works on compiler certification for
+the following reasons:
 \begin{itemize}
-\item Certification of \emph{real-world} compiler:
-\item Compositional reasoning:
+\item Certification of \emph{actually} real-world compiler: to certify
+  a real-world compiler, it is essential to faithfully certify an
+  existing, widespreadly used compiler.  Unfortunately, CompCert and
+  CompCertTSO is built for verification and not widely used.
+  Furthermore, CompCert's and Vellvm's semantics deals with only
+  single-thread programs, entirely ignoring concurrency.  CompCertTSO
+  addresses concurrency and deals with the TSO memory model, but
+  C11/C++11 semantics of concurrency is not entirely captured in the
+  TSO model.  Moreover, even except for concurrency, Vellvm's
+  semantics is not entirely faithful to the official LLVM semantics.
+  For example, Vellvm did not formalize vector types (statically sized
+  arrays), indirect jumps, and exceptions.  
+
+  I would like to address above issues and formalize the syntax and
+  semantics of the LLVM IR as faithful as the production-ready level.
+
+\item Powerful peasoning principle: TODO
+
+\item Low verification cost: TODO
+
 \end{itemize}
-I would like to follow the line of research on compiler certification.
 
 \section{Goal}
 TODO
@@ -132,13 +161,28 @@ TODO
 \subsection{Formalization of Real-World Languages and Machines}
 
 \subsection{Re-use of Previous Development}
+Compiler certification is not a fresh problem, and lots of certified
+compilers are developed, including CompCert \cite{TODO}, CompCertTSO
+\cite{TODO}, and Vellvm \cite{TODO}.  Each project took person-years
+of efforts to develop, so it is an unacceptable waste to reinvent the
+entire wheel in this project.  Thus I would like to re-use previous
+developments as much as possible, while leaving out unsatisfactory
+aspects of them.
 
-\subsection{Relaxed Memory Model}
+\paragraph{Memory Model}
+CompCertTSO is based on the TSO memory model \cite{TODO}, a relaxed
+memory model of x86 and Sparc architectures.  We may restrict our
+concern to the TSO model, instead of more relaxed models such as
+C11/C++11 and ARM models, to re-use CompCertTSO's memory model as-is.
+
+\paragraph{Semantics}
+
+\subsection{Relaxed Memory Model}\label{sec:relaxed}
 In the context of semantics engineering for single-thread programs,
-memory has long been abstracted to a map from locations to values.
-Many works on compiler certification and static analysis relies on
-this simple memory abstraction.  This abstraction is useful and
-arguably correct, at least for single-thread programs.  However, the
+memory has long been abstracted to map from locations to values.  Many
+works on compiler certification and static analysis relies on this
+simple memory abstraction.  This abstraction is useful and arguably
+correct, at least for single-thread programs.  However, the
 abstraction is broken for multi-thread programs.  C11/C++11 standards
 clearly declare that memory is not just a map \cite{TODO}; similarly
 to all modern architectures including x86 \cite{TODO} and ARM
@@ -153,41 +197,52 @@ int data = 0, flag = 0;
     assert (data==1);
 }}}
 \end{verbatim}
-Here, assume that \texttt{\{\{\{$p_1$|||$p_2$\}\}\}} is a thread-wise
-composition of two programs $p_1$ and $p_2$.  In the simple model, the
-assertion should succeed, since $\texttt{flag}=1$ means
-$\texttt{data}=1$.  However, in ARM processors, the assertion may fail
-due to relaxed memory behavior \cite{TODO}.  I defer the details on
-this example and the relaxed memory model to a tutorial in the ROSAEC
-Workshop.
+Here, \texttt{\{\{\{$p_1$|||$p_2$\}\}\}} is a thread-wise composition
+of two programs $p_1$ and $p_2$.  In the simple model, the assertion
+should succeed, since $\texttt{flag}=1$ means $\texttt{data}=1$.
+However, according to the C11 standard, the assertion may fail due to
+relaxed memory behavior \cite{TODO}.  The reason is that the write of
+\texttt{data} at the first thread is not particularly synchronized
+with the read of \texttt{data} at the second thread.  I defer the
+details on this example and the relaxed memory model to a tutorial in
+the ROSAEC Workshop.
 
 In the era of multi- and many-core systems, certification of
 real-world compiler should address the relaxed memory behavior.
-However, reasoning on the relaxed memory model seems to be much more
-complicated than on the simple model \cite{TODO}.  Design of a
-powerful, easy-to-use reasoning principle on the relaxed memory model
-would be essential in certification of LLVM.
+However, LLVM does not clearly declare its memory model, so we have to
+define a model.  Furthermore, reasoning on the relaxed memory model
+seems to be much more complicated than on the simple model
+\cite{TODO}.  Design of a manageable relaxed memory model and a
+powerful, easy-to-use reasoning principle on the model would be
+essential in certification of LLVM.
 
-\subsection{Compositional Reasoning}
+\subsection{Compositional Reasoning}\label{sec:compose}
 
 For modular development and proof of certified software, it is
 essential to prove in part, then \emph{composite} the partial proof to
-make the whole proof.  In the context of compiler certification, the
-following two are useful compositions:
+make the whole proof.  In the context of compiler certification, it is
+particularly useful to composite \emph{simulation} relations ($\sim$),
+both vertically and horizontally:
 \begin{itemize}
-\item Horizontal composition: suppose there is compilation $C_1: p_0
-  \mapsto p_1$ and $C_2: p_1 \mapsto p_2$.  $C_2 \circ C_1: p_0
-  \mapsto p_2$ TODO
-\item Vertical composition: suppose there is compilation $C_p: p_1
-  \mapsto p_2$ and $C_q: q_1 \mapsto q_2$.  $C_p \star C_q: p_1 \star
-  q_1 \mapsto p_2 \star q_2$ TODO
+\item Vertical composition: suppose there is compilation $C_1: p_0
+  \mapsto p_1$ and $C_2: p_1 \mapsto p_2$, where $p_i$ are program
+  fragments (such as functions).  Horizontal composition ($C_2 \circ
+  C_1$) respects the simulation relation, if $p_0 \sim p_1$ and $p_1
+  \sim p_2$ implies $p_0 \sim p_2$.
+\item Horizontal composition: suppose there is compilation $C_p: p_1
+  \mapsto p_2$ and $C_q: q_1 \mapsto q_2$, where $p_i$ and $q_i$ are
+  program fragments.  Suppose $p \star q$ is the juxtaposition of
+  program fragments $p$ and $q$.  Horizontal composition ($C_p \star
+  C_q: p_1 \star q_1 \mapsto p_2 \star q_2$) respects the simulation
+  relation, if $p_1 \sim p_2$ and $q_1 \sim q_2$ implies $p_1 \star
+  q_1 \sim p_2 \star q_2$.
 \end{itemize}
 
 I am lucky in that Prof. Hur is a pioneer in compositional reasoning.
-He has developed a powerful reasoning principle \cite{}, but design of
-a principle for concurrent, relaxed memory model is yet an open
-question.  I would like to solve this problem during the development
-of certified LLVM.
+He has developed a powerful reasoning principle \cite{TODO}, but
+design of a principle for concurrent, relaxed memory model is yet an
+open question.  I would like to solve this problem during the
+development of certified LLVM.
 
 \section{Plan}
 
