@@ -97,27 +97,28 @@
 Certification of real-world compiler is a long-standing goal.
 Compiler is an indispensable component of modern computer systems.
 However, real-world compilers like GCC and LLVM are known to contain
-lots of bugs \cite{TODO}, even in 2010s after 50+ years of compiler
-construction.  Compiler bugs can be detrimental to software
+lots of bugs \cite{Yang:2011:FUB:1993498.1993532,
+  Chen:2013:TCF:2491956.2462173}, even in 2010s after 50+ years of
+compiler construction.  Compiler bugs can be detrimental to software
 reliability since the bugs nullify analysis and reasoning on source
 program.  Currently, certification is the only option to ensure the
-absence of compiler bugs \cite{TODO}.
+absence of compiler bugs \cite{Yang:2011:FUB:1993498.1993532}.
 
 \paragraph{Previous Work}
 There are lots of outstanding works on compiler certification.  In the
-practical side, most notably, CompCert \cite{TODO} is the first
-certified compiler for a significant subset of C.  CompCertTSO
-\cite{TODO} is a variant of CompCert to deal with the TSO
-\emph{relaxed memory model} (\S\ref{sec:relaxed}) of the x86 and Sparc
-architectures.  Vellvm \cite{TODO} is a certified LLVM framework upon
-which \texttt{mem2reg} \cite{TODO} and \texttt{instcombine}
-\cite{TODO} passes are verified.  Vellvm is the first project that
-aims to certify a real-world compiler.  On the other hand, in the
-theoretical side, Hur et al. conducted a line of research of
-\emph{compositional reasoning} (\S\ref{sec:compose}) for modular proof
-of compiler certification \cite{TODO}.  Chlipala built a certified
-compiler for a ML-like language, focusing on proof automation
-\cite{TODO}.
+practical side, most notably, CompCert \cite{Leroy-Compcert-CACM} is
+the first certified compiler for a significant subset of C.
+CompCertTSO \cite{Sevcik:2013:CVC:2487241.2487248} is a variant of
+CompCert to deal with the TSO \emph{relaxed memory model}
+(\S\ref{sec:relaxed}) of the x86 and Sparc architectures.  Vellvm
+\cite{Zhao:2012:FLI:2103656.2103709} is a certified LLVM framework
+upon which \texttt{mem2reg} \cite{Zhao:2013:FVS:2491956.2462164} and
+\texttt{instcombine} [our submitted paper] passes are verified.
+Vellvm is the first project that aims to certify a real-world
+compiler.  On the other hand, in the theoretical side, Hur et
+al. conducted a line of research of \emph{compositional reasoning}
+(\S\ref{sec:compose}) for modular proof of compiler certification
+\cite{Hur:2012:MBK:2103656.2103666}.
 
 \subsection{Problem}
 However, I see a need for future works to certify a real-world
@@ -200,22 +201,25 @@ software.
 Towards the goal, I expect lots of theoretical and practical
 interesting challenges.  I am eager to solve the following challenges:
 
-\paragraph{Formalization of Real-World Languages and Machines}
+\paragraph{Formalization of Real-World Languages}
+The official LLVM documentations are written without intention to
+clearly define the language, so many corner cases are subject to
+interpretation.
 
 \paragraph{Re-use of Previous Development}
 Compiler certification is not a fresh problem, and lots of certified
-compilers are developed, including CompCert \cite{TODO}, CompCertTSO
-\cite{TODO}, and Vellvm \cite{TODO}.  Each project took person-years
-of efforts to develop, so it is an unacceptable waste to reinvent the
-entire wheel in this project.  Thus I would like to re-use previous
-developments as much as possible, while leaving out unsatisfactory
-aspects of them.
+compilers are developed, including CompCert, CompCertTSO, and Vellvm.
+Each project took person-years of efforts to develop, so it is an
+unacceptable waste to reinvent the entire wheel in this project.  Thus
+I would like to re-use previous developments as much as possible,
+while leaving out unsatisfactory aspects of them.
 
 \paragraph{Memory Model}
-CompCertTSO is based on the TSO memory model \cite{TODO}, a relaxed
-memory model of x86 and Sparc architectures.  We may restrict our
-concern to the TSO model, instead of more relaxed models such as
-C11/C++11 and ARM models, to re-use CompCertTSO's memory model as-is.
+CompCertTSO is based on the TSO memory model
+\cite{Sewell:2010:XRU:1785414.1785443}, a relaxed memory model of x86
+and Sparc architectures.  We may restrict our concern to the TSO
+model, instead of more relaxed models such as C11/C++11 and ARM
+models, to re-use CompCertTSO's memory model as-is.
 
 \paragraph{Relaxed Memory Model}\label{sec:relaxed}
 In the context of semantics engineering for single-thread programs,
@@ -224,9 +228,10 @@ works on compiler certification and static analysis relies on this
 simple memory abstraction.  This abstraction is useful and arguably
 correct, at least for single-thread programs.  However, the
 abstraction is broken for multi-thread programs.  C11/C++11 standards
-clearly declare that memory is not just a map \cite{TODO}; similarly
-to all modern architectures including x86 \cite{TODO} and ARM
-\cite{TODO}.
+clearly declare that memory is not just a map
+\cite{Batty:2011:MCC:1926385.1926394}; similarly to all modern
+architectures including x86 \cite{Sewell:2010:XRU:1785414.1785443} and
+ARM \cite{Sarkar:2011:UPM:1993498.1993520}.
 
 Here is an example of the \emph{relaxed} memory behavior, which is not
 explained in the simple model:
@@ -241,7 +246,7 @@ Here, \texttt{\{\{\{$p_1$|||$p_2$\}\}\}} is a thread-wise composition
 of two programs $p_1$ and $p_2$.  In the simple model, the assertion
 should succeed, since $\texttt{flag}=1$ means $\texttt{data}=1$.
 However, according to the C11 standard, the assertion may fail due to
-relaxed memory behavior \cite{TODO}.  The reason is that the write of
+relaxed memory behavior.  The reason is that the write of
 \texttt{data} at the first thread is not particularly synchronized
 with the read of \texttt{data} at the second thread.  I defer the
 details on this example and the relaxed memory model to a tutorial in
@@ -252,7 +257,7 @@ real-world compiler should address the relaxed memory behavior.
 However, LLVM does not clearly declare its memory model, so we have to
 define a model.  Furthermore, reasoning on the relaxed memory model
 seems to be much more complicated than on the simple model
-\cite{TODO}.  Design of a manageable relaxed memory model and a
+\cite{Aaron:GPS}.  Design of a manageable relaxed memory model and a
 powerful, easy-to-use reasoning principle on the model would be
 essential in certification of LLVM.
 
@@ -279,27 +284,19 @@ both vertically and horizontally:
 \end{itemize}
 
 I am lucky in that Prof. Hur is a pioneer in compositional reasoning.
-He has developed a powerful reasoning principle \cite{TODO}, but
-design of a principle for concurrent, relaxed memory model is yet an
-open question.  I would like to solve this problem during the
-development of certified LLVM.
+He has developed a powerful reasoning principle
+\cite{Hur:2012:MBK:2103656.2103666}, but design of a principle for
+concurrent, relaxed memory model is yet an open question.  I would
+like to solve this problem during the development of certified LLVM.
 
-\section{Plan}
-
-\paragraph{Team Building}
+\section{Recruit}
 This project will be a monumental work, so I would like to co-work
 with many people.  To this end, Prof. Hur contacted Prof. Vafeiadis in
 MPI-SWS (expert in C/C++, relaxed memory model and compiler
 verification) and Prof. Zdancewic in UPenn (author of Vellvm).  I am
 currently mentoring two interns, hoping that the two join the project
-in the future.  Also, I anticipate \emph{your} participation if you
-are interested in this project.
-
-\paragraph{Verification of Optimization Level 1}
-TODO
-
-\paragraph{Designing Reasoning Principle}
-TODO
+in the future.  Also, most importantly, I anticipate \emph{your}
+participation if you are interested in this project.
 
 % We recommend abbrvnat bibliography style.
 
