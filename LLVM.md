@@ -23,3 +23,13 @@ IR a lot of analyses and optimizations are defined as *passes*.
 ## On IR ##
 
 * Read the IR [manual](http://llvm.org/docs/LangRef.html).
+
+## On LLVM Deveopment ##
+
+* Read the Clang user [manual](http://clang.llvm.org/docs/UsersManual.html).
+
+* Read the Clang internals [manual](http://clang.llvm.org/docs/InternalsManual.html).
+
+* Read the Clang driver internals [manual](http://clang.llvm.org/docs/DriverInternals.html).
+
+* Read LLVM Programmer's [manual](http://llvm.org/docs/ProgrammersManual.html).
