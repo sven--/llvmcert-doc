@@ -1,11 +1,11 @@
-### On Coq ###
+# On Coq #
 
 Coq is an interactive theorem prover, in which you can define a
 function, state a property on the function, and prove the property.
 
 ## Installation ##
 
-# Coq #
+### Coq ###
 
 * Download Coq [here](http://coq.inria.fr/download) and install it.
 
@@ -18,11 +18,11 @@ function, state a property on the function, and prove the property.
 
 * Test by `coqc -v` in the command line.
 
-# Git #
+### Git ###
 
 Download [here](http://git-scm.com/downloads).
 
-# Emacs #
+### Emacs ###
 
 Currently, Emacs is practically the only editor that supports
 interactive theorem proving with Coq.
@@ -51,7 +51,7 @@ interactive theorem proving with Coq.
 
 * Read Tutorial by typing `C-h t`.
 
-# Study Software Foundations #
+## Study Software Foundations ##
 
 * Download [here](http://www.cis.upenn.edu/~bcpierce/sf/current/index.html).
 
